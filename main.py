@@ -32,7 +32,40 @@ class TaskManager:
     #     result = self.collection.delete_one({​"task_name": task_name}​)
     #     return result.deleted_count > 0
 
+    def filter_by_equals(self, field_name: str, value: str) -> List[dict]:
+        """$eq It will match the values that are equal to a specified value."""
+        query = {field_name: {"$eq": value}}
+        result = self.collection.find_one(query)
+        return list(result)
+
+    def filter_by_not_equals(self, field_name: str, value: str) -> List[dict]:
+        """$ne It will match all the values that are not equal to a specified value."""
+        query = {field_name: {"$ne": value}}
+        result = self.collection.find(query)
+        return list(result)
+
+    def filter_by_greater_than(self, field_name: str, value: int) -> List[dict]:
+        """$qt It will match the values that are greater than a specified value."""
+        query = {field_name: {"$gt": value}}
+        result = self.collection.find(query)
+        return list(result)
+
+    def filter_by_less_than(self, field_name: str, value: int) -> List[dict]:
+        """$lt It will match all the values that are less than a specified value."""
+        query = {field_name: {"$lt": value}}
+        result = self.collection.find(query)
+        return list(result)
+
     def get_single_query(
         self, query: Dict[str, Any], fields: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         return self.collection.find_one(query, fields)
+
+
+if __name__ == "__main__":
+    db = TaskManager(host="localhost", port=27017, db_name="new", collection_name="new")
+
+    # print(db.filter_by_equals("value", 115), "\n")
+    lists = db.filter_by_not_equals("value", 20)
+    for n in lists:
+        print(n)
