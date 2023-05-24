@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 pymongo = "*"
 random-word = "*"
+tqdm = "*"
+progressbar = "*"
+py-random-words = "*"
 
 [dev-packages]
 

@@ -1,12 +1,13 @@
 from main import TaskManager
-from random_word import RandomWords
+from py_random_words import RandomWords
 import random
-
+from tqdm import tqdm
+import time
 
 host = "localhost"
 port = 27017
-db_name = input("Name of database: ")
-collection_name = input("Name of collection: ")
+db_name = input("Enter name of database: ")
+collection_name = input("Enter name of collection: ")
 
 
 db = TaskManager(host=host, port=port, db_name=db_name, collection_name=collection_name)
@@ -34,18 +35,20 @@ while True:
         break
 
 i = int(input("How many documents do you want to create? "))
-while 0 < i:
-    i -= 1
+
+
+for _ in tqdm(range(0, i), desc="Progress..."):
     document = {}
     for keys, values in dictionary.items():
         if values == "str":
             r = RandomWords()
-            document.update({keys: r.get_random_word()})
+            document.update({keys: r.get_word()})
         if values[0] == "int":
             random_value = random.randint(values[1], values[2])
             document.update({keys: random_value})
         if values[0] == "float":
             random_value = round(random.uniform(values[1], values[2]), values[3])
             document.update({keys: random_value})
-
+    time.sleep(0.01)
     db.create_task(task=document)
+print("Documents created successfully!")
