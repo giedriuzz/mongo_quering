@@ -6,9 +6,16 @@ from typing import Dict, List, Any, Optional
 
 class TaskManager:
     def __init__(
-        self, host: str, port: int, db_name: str, collection_name: str
+        self,
+        host: str,
+        user_name: str,
+        user_passwd: str,
+        port: int,
+        db_name: str,
+        collection_name: str,
     ) -> None:
-        self.client = MongoClient(host, port)
+        uri = "mongodb://ufo:pempiai234@192.168.1.81:27017"
+        self.client = MongoClient(uri)
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
 
@@ -63,9 +70,18 @@ class TaskManager:
 
 
 if __name__ == "__main__":
-    db = TaskManager(host="localhost", port=27017, db_name="new", collection_name="new")
+    db = TaskManager(
+        host="localhost",
+        user_name="aa",
+        user_passwd="ddd",
+        port=27017,
+        db_name="cafeteria",
+        collection_name="new",
+    )
 
     # print(db.filter_by_equals("value", 115), "\n")
     lists = db.filter_by_not_equals("value", 20)
     for n in lists:
         print(n)
+
+    print(db.get_all_tasks())

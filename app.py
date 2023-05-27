@@ -4,13 +4,23 @@ import random
 from tqdm import tqdm
 import time
 
-host = "localhost"
+# host = "localhost"
+host = "192.168.1.81"  # for RPI4
+user_name = "cafeteria"
+password = "klaipeda"
 port = 27017
 db_name = input("Enter name of database: ")
 collection_name = input("Enter name of collection: ")
 
 
-db = TaskManager(host=host, port=port, db_name=db_name, collection_name=collection_name)
+db = TaskManager(
+    host=host,
+    port=port,
+    user_name=user_name,
+    user_passwd=password,
+    db_name=db_name,
+    collection_name=collection_name,
+)
 
 dictionary = {}
 
