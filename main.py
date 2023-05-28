@@ -11,10 +11,10 @@ class TaskManager:
         user_name: str,
         user_passwd: str,
         port: int,
-        db_name: str,
-        collection_name: str,
+        db_name: str = "",
+        collection_name: str = "",
     ) -> None:
-        uri = "mongodb://ufo:pempiai234@192.168.1.81:27017"
+        uri = "mongodb://%s:%s@%s:%s" % (user_name, user_passwd, host, port)
         self.client = MongoClient(uri)
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]

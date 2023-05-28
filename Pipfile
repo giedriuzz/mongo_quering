@@ -9,6 +9,8 @@ random-word = "*"
 tqdm = "*"
 progressbar = "*"
 py-random-words = "*"
+maskpass = "*"
+randomtimestamp = "*"
 
 [dev-packages]
 
