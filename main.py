@@ -1,6 +1,4 @@
 from pymongo import MongoClient
-from pymongo.database import Database
-from pymongo.collection import Collection
 from typing import Dict, List, Any, Optional, Union
 from connect.connect import ConnectToRpi4
 
@@ -106,23 +104,4 @@ class TaskManager:
 
 
 if __name__ == "__main__":
-    db = TaskManager(
-        host="192.168.1.81",
-        user_name="",
-        user_passwd="",
-        port=27017,
-        db_name="pets",
-        collection_name="pets",
-    )
-
-    # print(db.filter_by_equals("value", 115), "\n")
-    lists = db.filter_by_not_equals("value", 20)
-    for n in enumerate(lists, start=1):
-        print(n, end="\n")
-
-    # print(db.get_all_tasks())
-
-    filtered = db.filter_by_greater_than_or_equals(
-        field_name="birth_day", value="2022-05-12"
-    )
-    print(filtered, end="\n")
+    pass

@@ -1,10 +1,9 @@
 from pymongo import MongoClient
-from pymongo.database import Database
-import maskpass
 from dataclasses import dataclass
+from pymongo.database import Database
 
 
-class Connect:
+class Connect:  # Leaved if use a docker on compatible machine without user authentication
     def connect_to_mongodb(self, host: str, port: int, db_name: str) -> Database:
         client = MongoClient(host, port)
         database = client[db_name]
@@ -21,6 +20,5 @@ class ConnectToRpi4:
     collection_name: str
 
 
-# Example usage
 if __name__ == "__main__":
     pass
