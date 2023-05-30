@@ -147,6 +147,7 @@ logger.debug(".. Start logging create of documents ..")
 
 i = input_one_integer()
 logger.debug(f"How many documents do you want to create: {i}")
+
 for _ in tqdm(range(0, i), desc="Progress..."):
     document_of_collection = {}
     for keys, values in dict_of_collection.items():
@@ -157,11 +158,12 @@ for _ in tqdm(range(0, i), desc="Progress..."):
         if values[0] == "int":
             random_value = random.randint(values[1], values[2])
             document_of_collection.update({keys: random_value})
+            logger.debug(f"Value 'int' is: {random_value}")
 
         if values[0] == "float":
             random_value = round(random.uniform(values[1], values[2]), values[3])
             document_of_collection.update({keys: random_value})
-
+            logger.debug(f"Value 'float' is: {random_value}")
         if values[0] == "utc":
             document_of_collection.update({keys: create_utc_datetime(values[1])})
 
