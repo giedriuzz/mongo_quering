@@ -102,6 +102,65 @@ class TaskManager:
         result = self.collection.find(query)
         return list(result)
 
+    def filter_by_greater_than_equal(self, field_name: str, value: int) -> List[dict]:
+        """$gte	It will match all the values that are greater than or equal to a specified value."""
+        query = {field_name: {"$gte": value}}
+        result = self.collection.find(query)
+        return list(result)
+
+    def filter_by_less_than_equal(self, field_name: str, value: int) -> List[dict]:
+        """$lte	It will match all the values that are less than or equal to a specified value."""
+        query = {field_name: {"$lte": value}}
+        result = self.collection.find(query)
+        return list(result)
+
+    def filter_by_in(self, field_name: str, value: List[int]) -> List[dict]:
+        query = {field_name: {"$in": value}}
+        result = self.collection.find(query)
+        return list(result)
+
+    def filter_by_not_in(self, field_name: str, value: List[int]) -> List[dict]:
+        query = {field_name: {"$nin": value}}
+        result = self.collection.find(query)
+        return list(result)
+
+    """all items (name and year made) where the quantity is less or equal to 10 and the price is equal or less of 20.00."""
+
+    def filter_by_less_than_equal_two_fields(
+        self,
+        first_field: str,
+        first_value: int,
+        second_field: str,
+        second_value: int,
+        sort_fields,
+    ) -> List[dict]:
+        """$lte	It will match all the values that are less than or equal to a specified value."""
+        query = {
+            first_field: {"$lte": first_value},
+            "$and": [{second_field: {"$lte": second_value}}],
+        }
+        fields = {**sort_fields}
+        result = self.collection.find(query, fields)
+        return list(result)
+
+    def filter_by_greater_than_equal_two_fields(
+        self, first_field: str, first_value: int, second_field: str, second_value: int
+    ) -> List[dict]:
+        """$lte	It will match all the values that are less than or equal to a specified value."""
+        query = {
+            first_field: {"$gte": first_value},
+            "$and": [{second_field: {"$gte": second_value}}],
+        }
+
+        result = self.collection.find(query)
+        return list(result)
+
+    def filter_fields(self, collection: str, keys_values) -> List[dict]:
+        query = {**keys_values}
+        collections = {**collection}
+        result = self.collection.find(collections, query)
+        return list(result)
+
 
 if __name__ == "__main__":
     pass
