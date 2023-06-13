@@ -3,6 +3,6 @@
     "user_psswd": "pempiai234",
     "host":"192.168.1.81",
     "port": "27017",
-    "database":"pets",
-    "collection": "pets"
+    "database":"pets"
+    
 }

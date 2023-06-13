@@ -1,24 +1,55 @@
 from pymongo import MongoClient
 from typing import Dict, List, Any, Optional, Union
-
+from pymongo.errors import (
+    PyMongoError,
+    CollectionInvalid,
+    ConfigurationError,
+    ConnectionFailure,
+    ExecutionTimeout,
+    InvalidURI,
+)
 from connect.connect import ConnectToRpi4
 
 
 class TaskManager:
     def __init__(
         self,
+        collection: str,
         base: ConnectToRpi4,
     ) -> None:
-        uri = "mongodb://%s:%s@%s:%s/" % (
-            base.user_name,
-            base.user_passwd,
-            base.host,
-            base.port,
-        )
-        self.db_name = base.db_name
-        self.client = MongoClient(uri)
-        self.db = self.client[base.db_name]
-        self.collection = self.db[base.collection_name]
+        try:
+            uri = "mongodb://%s:%s@%s:%s/" % (
+                base.user_name,
+                base.user_passwd,
+                base.host,
+                base.port,
+            )
+            self.collection_col = collection
+            self.db_name = base.db_name
+            self.client = MongoClient(uri)
+            self.db = self.client[base.db_name]
+            self.collection = self.db[self.collection_col]
+
+        except ConnectionFailure as e:
+            """Rise ConnectionFailure when:
+            1) bad password
+
+            """
+            print("ConnectionFailure an error occurred ***>:", str(e))
+            return None
+
+        except InvalidURI as e:
+            """Rise InvalidURI when:
+            1) bad URI mongodb:// vs mongosdb://
+
+            """
+            print("InvalidURI an error occurred ***>:", str(e))
+            return None
+        except PyMongoError as e:
+            """Rise PyMongoError when:
+            1) bad port"""
+            print("PyMongoError an error occurred ***>:", str(e))
+            return None
 
     def create_task(self, task: Dict[str, Any]) -> str:
         result = self.collection.insert_one(task)
@@ -160,9 +191,9 @@ class TaskManager:
         result = self.collection.find(query)
         return list(result)
 
-    def filter_fields(self, collection: str, keys_values) -> List[dict]:
-        query = {**keys_values}
-        collections = {**collection}
+    def filter_fields(self, fields: dict, filters: dict) -> List[dict]:
+        query = {**filters}
+        collections = {**fields}
         result = self.collection.find(collections, query)
         return list(result)
 

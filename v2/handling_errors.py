@@ -3,6 +3,7 @@ import logging.config
 import time
 import random
 import datetime
+from typing import Union
 from pymongo import MongoClient
 from datetime import timezone, timedelta
 from py_random_words import RandomWords
@@ -11,9 +12,9 @@ import maskpass
 from pymongo.errors import (
     PyMongoError,
     CollectionInvalid,
-    ConfigurationError,
-    ConnectionFailure,
-    ExecutionTimeout,
+    NetworkTimeout,
+    AutoReconnect,
+    WriteError,
 )
 from connect.connect import ConnectToRpi4
 from main import TaskManager
@@ -21,57 +22,94 @@ from main import TaskManager
 import json
 
 
-user_name = input("Enter your username: ")  # When use inputs
-password = maskpass.askpass(prompt="Enter your password: ", mask="*")
-host = "192.168.1.81"  # IP of RPI4
-port = 27017
-db_name = input("Enter your database name: ")
-collection_name = input("Enter name of collection: ")
+def connect_to_db_with_config(config: str):
+    with open(config, "r") as f:
+        config = json.load(f)
+
+        host = config.get("host")
+        port = config.get("port")
+        username = config.get("user_name")
+        password = config.get("user_psswd")
+        auth_source = config.get("database")
+
+        db = ConnectToRpi4(
+            user_name=username,
+            user_passwd=password,
+            host=host,
+            port=port,
+            db_name=auth_source,
+        )
+
+    return db
 
 
-db = ConnectToRpi4(
-    user_name=user_name,
-    user_passwd=password,
-    host=host,
-    port=port,
-    db_name=db_name,
-    collection_name=collection_name,
-)
-
-task = TaskManager(db)
-query = {"names": "alpaca"}
-update = {"price": 500}
-print(task.update_one(query=query, update=update))
+config_file = "config.json"
+connection = connect_to_db_with_config(config=config_file)
+querying = TaskManager(collection="pets", base=connection)
 
 
-def filter_price() -> list:
+def filter_price() -> Union[list, bool]:
+    print("****************************************************************")
     try:
-        return task.filter_fields({"price": {"$gte": 100}}, {"price": 1})
+        return querying.filter_fields({"price": {"$gte": 999}}, {"price": 1})
 
     except CollectionInvalid as e:
-        print("An error occurred --> :", str(e))
+        print("CollectionInvalid an error occurred --> :", str(e))
         return False
-
+    except NetworkTimeout as e:
+        print("NetworkTimeout an error occurred --> :", str(e))
+        return False
+    except AutoReconnect as e:
+        """Rise AutoReconnect when:
+        1) bad IP address
+        2) bad port number
+        3) unconnected LAN  cable
+        """
+        print("AutoReconnect an error occurred --> :", str(e))
+        return False
     except PyMongoError as e:
-        print("An error occurred --> :", str(e))
+        """Rise PyMongoError when:
+        1) bad db user name
+        2) bad db user password"""
+        print("PyMongoError an error occurred --> :", str(e))
         return False
 
 
-def create_collection():
-    try:
-        task.create_task({"name": "Giedrius", "job_name": "welder"})
-        return True
-
-    except CollectionInvalid as e:
-        print("CollectionInvalid --> :", str(e))
-        return False
-
-    except PyMongoError as e:
-        print("An error occurred --> :", str(e))
-        return False
+if filter_price():
+    print(filter_price())
+else:
+    i = 0
+    while i < 3:
+        if filter_price():
+            print(filter_price())
+        else:
+            i += 1
+            print(f"{i} attempts")
 
 
-# print(filter_price())
+# def create_collection() -> bool:
+#     try:
+#         querying.create_task(
+#             {
+#                 "name": "cow",
+#                 "price": 100,
+#                 "quantity": 23,
+#                 "birth_day": "2022-04-02T12:17:40.201Z",
+#             }
+#         )
+#         return True
+
+#     except CollectionInvalid as e:
+#         print("CollectionInvalid --> :", str(e))
+#         return False
+#     except WriteError as e:
+#         print("WriteError --> :", str(e))
+#         return False
+#     except PyMongoError as e:
+#         print("An error occurred --> :", str(e))
+#         return False
+
+
 # print(create_collection())
 
 
@@ -91,7 +129,7 @@ def create_collection():
 #         collection_name = config.get("collection")
 
 #         # connection_string = (
-#         #     f"mongodb://{username}:{password}@{host}:{port}/{auth_source}"
+#         #     f"mongodb:///{username}:{password}@{host}:{port}/{auth_source}"
 #         # )
 #         db = ConnectToRpi4(
 #             user_name=username,

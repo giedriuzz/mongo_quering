@@ -17,7 +17,6 @@ class ConnectToRpi4:
     host: str
     port: int
     db_name: int
-    collection_name: str
 
 
 if __name__ == "__main__":
