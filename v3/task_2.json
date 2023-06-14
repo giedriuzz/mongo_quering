@@ -1,0 +1,164 @@
+json_object = {
+    "name": "John Doe",
+    "age": 25,
+    "is_student": True,
+    "interests": ["reading", "traveling", "photography"],
+    "address": {
+        "street": "123 Main Street",
+        "city": "New York",
+        "country": {"name": "United States", "code": "US"},
+    },
+    "birth_date": "1998-05-10",
+    "metadata": {"category": "A", "priority": 1},
+    "favorite_things": ["apple", 5, False],
+}
+
+json_object = (
+    {
+        "validator": {
+            "$jsonSchema": {
+                "bsonType": "object",
+                "required": [
+                    "name",
+                    "age",
+                    "is_student",
+                    "interests",
+                    "address",
+                    "birth_date",
+                    "metadata",
+                    "favorite_things",
+                ],
+                "properties": {
+                    "name": {"bsonType": "string"},
+                    "age": {"bsonType": "int", "minimum": 0},
+                    "is_student": {"bsonType": "bool"},
+                    "interests": {"bsonType": "array"},
+                    "address": {
+                        "bsonType": "object",
+                        "required": ["street", "city", "country"],
+                        "properties": {
+                            "street": {"bsonType": "string"},
+                            "city": {"bsonType", "string"},
+                            "country": {
+                                "bsonType": "object",
+                                "required": ["name", "code"],
+                                "properties": {
+                                    "name": {"bsonType": "string"},
+                                    "code": {"bsonType": "string"},
+                                },
+                            },
+                        },
+                    },
+                    "birth_date": {"bsonType": "string"},
+                    "metadata": {
+                        "bsonType": "object",
+                        "required": ["category", "priority"],
+                        "properties": {
+                            "category": {"bsonType": "string"},
+                            "priority": {"bsonType": "int"},
+                        },
+                    },
+                    "favorite_things": {"bsonType": "array"},
+                },
+            },
+        },
+    },
+)
+
+json_object = {
+    "person": {
+        "name": "John Doe",
+        "age": 30,
+        "is_student": False,
+        "address": {
+            "street": "456 Elm Street",
+            "city": "San Francisco",
+            "country": {
+                "name": "United States",
+                "code": "US"
+            }
+        },
+        "contacts": [
+            {
+                "type": "email",
+                "value": "john.doe@example.com"
+            },
+            {
+                "type": "phone",
+                "value": "1 123-456-7890"
+            }
+        ],
+        "education": [
+            {
+                "institution": "University of XYZ",
+                "degree": "Bachelor's",
+                "major": "Computer Science",
+                "completed": True
+            },
+            {
+                "institution": "ABC College",
+                "degree": "Master's",
+                "major": "Data Science",
+                "completed": False
+            }
+        ]
+    },
+    "products": [
+        {
+            "id": 1,
+            "name": "Product 1",
+            "price": 19.99,
+            "is_available": True
+        },
+        {
+            "id": 2,
+            "name": "Product 2",
+            "price": 29.99,
+            "is_available": False
+        }
+    ]
+}
+
+
+
+
+json_object = {
+    "validator":{
+        "$jsonSchema":{
+            "bsonType":"object"{
+                "required":["person", "products"],
+                "properties":{
+                    "person":{
+                        "bsonType":"object",
+                        "required":["name", "age", "is_student", "address", "contacts", "education"],
+                        "properties":{
+                            "bsonType": "object",
+                            "name":{"bsonType":"string"},
+                            "age":{"bsonType":"integer"},
+                            "is_student":{"bsonType":"boll"},
+                            "address":{
+                                "bsonType":"object",
+                                "required":["street", "city", "country"],
+                                "properties":{
+                                    "street":{"bsonType":"string"},
+                                    "city":{"bsonType":"string"},
+                                    "country":{
+                                        "bsonType":"object",
+                                        "required":["name", "code"],
+                                        "properties":{
+                                            "name":{"bsonType":"string"},
+                                            "code":{"bsonType": "string"},
+                                        },
+                                    },
+                                },
+                            },
+                            "contacts":{"bsonType":"array"},
+                            "education":{"bsonType":"array"},
+                        },
+                    },
+                    "products":{"bsonType":"array"},
+                },   
+            },
+        },
+    },
+}

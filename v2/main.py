@@ -192,8 +192,8 @@ class TaskManager:
         return list(result)
 
     def filter_fields(self, fields: dict, filters: dict) -> List[dict]:
-        query = {**filters}
         collections = {**fields}
+        query = {**filters}
         result = self.collection.find(collections, query)
         return list(result)
 
