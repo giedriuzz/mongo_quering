@@ -11,6 +11,7 @@ progressbar = "*"
 py-random-words = "*"
 maskpass = "*"
 randomtimestamp = "*"
+names-generator = "*"
 
 [dev-packages]
 

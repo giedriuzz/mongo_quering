@@ -11,8 +11,8 @@ host = "192.168.1.81"  # ip of RPI4
 port = 27017
 # db_name = input("Enter name of database: ")
 # collection_name = input("Enter name of collection: ")
-db_name = "pets"
-collection_name = "pets"
+db_name = "cafeteria"
+collection_name = "tables"
 
 db = ConnectToRpi4(
     user_name=user_name,
@@ -63,21 +63,21 @@ task = TaskManager(db)
 #     for a in i:
 #         print(a)
 
-filter_lte = task.filter_by_less_than_equal_two_fields(
-    first_field="quantity",
-    first_value=100,
-    second_field="price",
-    second_value=200.00,
-    pushed_fields={"name": 1, "birth_day": 1},
-)
-print(filter_lte)
-
-
-# by_fields = task.filter_fields(
-#     {"quantity": {"$lte": 100}, "$and": [{"price": {"$lte": 200.00}}]},
-#     {"name": 1, "birth_day": 1},
+# filter_lte = task.filter_by_less_than_equal_two_fields(
+#     first_field="quantity",
+#     first_value=100,
+#     second_field="price",
+#     second_value=200.00,
+#     pushed_fields={"name": 1, "birth_day": 1},
 # )
-# print(by_fields)
+# print(filter_lte)
+
+
+by_fields = task.filter_fields(
+    {"amount_of_persons": {"$gte": 1}, "$and": [{"amount_of_persons": {"$gte": 3}}]},
+    {"table_name": 1, "table_number": 1},
+)
+print(by_fields)
 
 # filter_gte = task.filter_by_greater_than_equal_two_fields(
 #     first_field="quantity", first_value=100, second_field="price", second_value=200.00
