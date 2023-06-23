@@ -12,17 +12,12 @@ from connect.connect import ConnectToRpi4
 from main import TaskManager
 
 
-user_name = input("Enter your username: ")  # When use inputs
-
-password = maskpass.askpass(prompt="Enter your password: ", mask="*")
-
+user_name = input("Enter your database username: ")  # When use inputs
+password = maskpass.askpass(prompt="Enter your database password: ", mask="*")
 host = "192.168.1.81"  # IP of RPI4
-
 port = 27017
-
-db_name = input("Enter your database name: ")
-
-collection_name = input("Enter name of collection: ")
+db_name = input("Enter new database name: ")
+collection_name = input("Enter new name of database collection: ")
 
 
 db = ConnectToRpi4(
@@ -42,7 +37,7 @@ def choose_type_of_field() -> int:
         try:
             field_type = int(
                 input(
-                    "Choose type of field:\n1.String(random words)\n2.Integer\n3.Float\n4.UTC\n5.Full name\n6.Only date\n7.Exit\nChoose: "
+                    "Choose type of field:\n1.String(random words)\n2.Integer\n3.Float\n4.UTC from date now\n5.Full name\n6.Only date\n7.Exit\nChoose: "
                 )
             )
             return field_type
@@ -71,7 +66,9 @@ def create_utc_datetime_min_max(difference_1: int, difference_2: int) -> datetim
     min_difference = dt.year - difference_1
     max_difference = min_difference - difference_2
     rnd_years = random.randint(max_difference, min_difference)
-    random_date = datetime.datetime(rnd_years, 1, 12)
+    rnd_month = random.randint(1, 12)
+    rnd_days = random.randint(1, 29)
+    random_date = datetime.datetime(rnd_years, rnd_month, rnd_days)
     return random_date
 
 
@@ -113,7 +110,7 @@ dict_of_collection = {}
 
 
 while True:
-    field_name = input("Name of field: ")
+    field_name = input("Name of collection field: ")
 
     field_type = choose_type_of_field()
 
