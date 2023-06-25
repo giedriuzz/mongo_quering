@@ -163,4 +163,20 @@ class TaskManager:
 
 
 if __name__ == "__main__":
-    pass
+    connect = ConnectToRpi4(
+        user_name="ufo",
+        user_passwd="pempiai234",
+        host="192.168.1.81",
+        port=27017,
+        db_name="elevatorapp",
+        collection_name="technician",
+    )
+
+    db = TaskManager(connect)
+
+    id = db.filter_by_greater_than_equal(field_name="technician_ident_number", value=1)
+    id_numbers = []
+    for i in id:
+        id_numbers.append(i.get("technician_ident_number"))
+
+    print(id_numbers)

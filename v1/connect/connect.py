@@ -16,7 +16,7 @@ class ConnectToRpi4:
     user_passwd: str
     host: str
     port: int
-    db_name: int
+    db_name: str
     collection_name: str
 
 

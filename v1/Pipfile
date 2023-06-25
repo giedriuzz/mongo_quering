@@ -12,6 +12,7 @@ py-random-words = "*"
 maskpass = "*"
 randomtimestamp = "*"
 names-generator = "*"
+python-lorem = "*"
 
 [dev-packages]
 
