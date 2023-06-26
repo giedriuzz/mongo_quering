@@ -105,115 +105,118 @@ class DatabaseDataGenerator:
                 break
 
 
-# * -- PROGRAM STARTS FROM HERE --
-user_name = input("Enter your database username: ")  # When use inputs
-password = maskpass.askpass(prompt="Enter your database password: ", mask="*")
-host = "192.168.1.81"  # IP of RPI4
-port = 27017
-db_name = input("Enter new database name: ")
-collection_name = input("Enter new name of database collection: ")
+if __name__ == "__main":
+    # * -- PROGRAM STARTS FROM HERE --
+    user_name = input("Enter your database username: ")  # When use inputs
+    password = maskpass.askpass(prompt="Enter your database password: ", mask="*")
+    host = "192.168.1.81"  # IP of RPI4
+    port = 27017
+    db_name = input("Enter new database name: ")
+    collection_name = input("Enter new name of database collection: ")
 
+    db = ConnectToRpi4(
+        user_name=user_name,
+        user_passwd=password,
+        host=host,
+        port=port,
+        db_name=db_name,
+        collection_name=collection_name,
+    )
 
-db = ConnectToRpi4(
-    user_name=user_name,
-    user_passwd=password,
-    host=host,
-    port=port,
-    db_name=db_name,
-    collection_name=collection_name,
-)
+    task = TaskManager(db)
 
-task = TaskManager(db)
+    gen = DatabaseDataGenerator()
+    dict_of_collection = {}
 
-gen = DatabaseDataGenerator()
-dict_of_collection = {}
+    while True:
+        field_name = input("Name of collection field: ")
 
+        field_type = gen.choose_type_of_field()
 
-while True:
-    field_name = input("Name of collection field: ")
+        if field_type == 1:
+            dict_of_collection.update({field_name: "str"})
 
-    field_type = gen.choose_type_of_field()
+        elif field_type == 2:
+            value = gen.min_max_value()
+            dict_of_collection.update({field_name: ("int", value[0], value[1])})
 
-    if field_type == 1:
-        dict_of_collection.update({field_name: "str"})
-
-    elif field_type == 2:
-        value = gen.min_max_value()
-        dict_of_collection.update({field_name: ("int", value[0], value[1])})
-
-    elif field_type == 3:
-        value = gen.min_max_value()
-        value_rounding = gen.not_except_string("Rounding value: ")
-        dict_of_collection.update(
-            {field_name: ("float", value[0], value[1], value_rounding)}
-        )
-
-    elif field_type == 4:
-        year_diff = gen.not_except_string("Year difference: ")
-        dict_of_collection.update({field_name: ("utc", year_diff)})
-
-    elif field_type == 5:
-        dict_of_collection.update({field_name: "fname"})
-
-    elif field_type == 6:
-        value = gen.min_max_value()
-        dict_of_collection.update({field_name: ("onlydate", value[0], value[1])})
-
-    elif field_type == 7:
-        word_list = input("Write words list separated by ',': ").split(",")
-        dict_of_collection.update({field_name: ("randomword", word_list)})
-
-    elif field_type == 8:
-        value = gen.min_max_value()
-        dict_of_collection.update({field_name: ("randominteger", value[0], value[1])})
-
-    elif field_type == 9:
-        dict_of_collection.update({field_name: "sentence"})
-
-    elif field_type == 11:
-        print("*** Field created successfully! ***\n")
-        break
-
-
-i = gen.input_one_integer()
-
-
-for _ in tqdm(range(0, i), desc="Progress..."):
-    document_of_collection = {}
-    for keys, values in dict_of_collection.items():
-        if values == "str":
-            r = RandomWords()
-            document_of_collection.update({keys: r.get_word()})
-
-        if values[0] == "int":
-            random_value = random.randint(values[1], values[2])
-            document_of_collection.update({keys: random_value})
-
-        if values[0] == "float":
-            random_value = round(random.uniform(values[1], values[2]), values[3])
-            document_of_collection.update({keys: random_value})
-
-        if values[0] == "utc":
-            document_of_collection.update({keys: gen.create_utc_datetime(values[1])})
-
-        if values == "fname":  # ar reikia tik values be [0]
-            document_of_collection.update({keys: generate_name(style="capital")})
-
-        if values[0] == "onlydate":
-            document_of_collection.update(
-                {keys: gen.create_utc_datetime_min_max(values[1], values[2])}
+        elif field_type == 3:
+            value = gen.min_max_value()
+            value_rounding = gen.not_except_string("Rounding value: ")
+            dict_of_collection.update(
+                {field_name: ("float", value[0], value[1], value_rounding)}
             )
-        if values[0] == "randomword":
-            document_of_collection.update({keys: gen.random_word_from_list(values[1])})
 
-        if values[0] == "randominteger":
-            random_value = random.randint(values[1], values[2])
-            document_of_collection.update({keys: random_value})
+        elif field_type == 4:
+            year_diff = gen.not_except_string("Year difference: ")
+            dict_of_collection.update({field_name: ("utc", year_diff)})
 
-        if values == "sentence":
-            sentence = lorem.get_sentence(count=2, word_range=(1, 3))
-            document_of_collection.update({keys: sentence})
+        elif field_type == 5:
+            dict_of_collection.update({field_name: "fname"})
 
-    time.sleep(0.01)
-    task.create_task(task=document_of_collection)
-print("*** Documents created successfully! ***")
+        elif field_type == 6:
+            value = gen.min_max_value()
+            dict_of_collection.update({field_name: ("onlydate", value[0], value[1])})
+
+        elif field_type == 7:
+            word_list = input("Write words list separated by ',': ").split(",")
+            dict_of_collection.update({field_name: ("randomword", word_list)})
+
+        elif field_type == 8:
+            value = gen.min_max_value()
+            dict_of_collection.update(
+                {field_name: ("randominteger", value[0], value[1])}
+            )
+
+        elif field_type == 9:
+            dict_of_collection.update({field_name: "sentence"})
+
+        elif field_type == 11:
+            print("*** Field created successfully! ***\n")
+            break
+
+    i = gen.input_one_integer()
+
+    for _ in tqdm(range(0, i), desc="Progress..."):
+        document_of_collection = {}
+        for keys, values in dict_of_collection.items():
+            if values == "str":
+                r = RandomWords()
+                document_of_collection.update({keys: r.get_word()})
+
+            if values[0] == "int":
+                random_value = random.randint(values[1], values[2])
+                document_of_collection.update({keys: random_value})
+
+            if values[0] == "float":
+                random_value = round(random.uniform(values[1], values[2]), values[3])
+                document_of_collection.update({keys: random_value})
+
+            if values[0] == "utc":
+                document_of_collection.update(
+                    {keys: gen.create_utc_datetime(values[1])}
+                )
+
+            if values == "fname":  # ar reikia tik values be [0]
+                document_of_collection.update({keys: generate_name(style="capital")})
+
+            if values[0] == "onlydate":
+                document_of_collection.update(
+                    {keys: gen.create_utc_datetime_min_max(values[1], values[2])}
+                )
+            if values[0] == "randomword":
+                document_of_collection.update(
+                    {keys: gen.random_word_from_list(values[1])}
+                )
+
+            if values[0] == "randominteger":
+                random_value = random.randint(values[1], values[2])
+                document_of_collection.update({keys: random_value})
+
+            if values == "sentence":
+                sentence = lorem.get_sentence(count=2, word_range=(1, 3))
+                document_of_collection.update({keys: sentence})
+
+        time.sleep(0.01)
+        task.create_task(task=document_of_collection)
+    print("*** Documents created successfully! ***")
